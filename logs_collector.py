@@ -21,6 +21,7 @@ Details:
     Author: ogamingSCV
     Version: 1.1
     Email: fetes.05-comings@icloud.com
+    License: GNU General Public License v3.0
 
 
 Usage:

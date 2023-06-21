@@ -34,6 +34,7 @@ Suppose we have a folder named "/path/to/logs/" containing the following log fil
 - `access.log`
 - `error.log`
 - `application.log`
+
 We want to retrieve the last lines from these log files, truncate them to a maximum length of 70 characters, and store the sorted last lines in an output file named "output.txt".
 
 Running the script with the following command:
@@ -58,5 +59,7 @@ The "output.txt" file will contain the following content:
 ## Author
 
 Author: ogamingSCV
+
 Version: 1.0
+
 Email: fetes.05-comings@icloud.com

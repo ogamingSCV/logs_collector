@@ -19,7 +19,7 @@ used across different files in a given folder and its subdirectories.
 
 Details:
     Author: ogamingSCV
-    Version: 1.0
+    Version: 1.1
     Email: fetes.05-comings@icloud.com
 
 
@@ -48,7 +48,7 @@ Example:
 
     Running the script with the following command:
 
-        python3 script.py /path/to/logs/ output.txt 70
+        python3 logs_collector.py /path/to/logs/ output.txt 70
 
     The script will process the log files in the specified folder and generate the "output.txt" file with the sorted last lines.
 
@@ -61,32 +61,33 @@ Output:
     2023-10-01 23:59:59  [INFO]  Last line of application.log with some ex  /path/to/logs/application.log
 """
 
+import argparse
 import os
 import sys
 
 # List to store the last lines from files
 last_lines = []
 
-# Check if the folder path is provided as a command-line argument
-if len(sys.argv) < 4:
-    folder_path = sys.argv[1]
-else:
-    # Defaults to "/var/log/" in none is provided
-    folder_path = "/var/log/"
+# Set default values
+folder_path = "/var/log/"
+output_file = "log_formats.txt"
+max_length = 80
 
-# Check if the output file is provided as a command-line argument
-if len(sys.argv) < 4:
-    output_file = sys.argv[2]
-else:
-    # Defaults to "log_formats.txt" in none is provided
-    output_file = "log_formats.txt"
+# Create an ArgumentParser object
+parser = argparse.ArgumentParser(description="This script collects the last lines from readable log files in a specified folder and its subdirectories. It is designed to compare the log formats by extracting the last line from each file.")
 
-# Check if the max length is provided as a command-line argument
-if len(sys.argv) < 4:
-    max_length = sys.argv[3]
-else:
-    # Defaults to 80 in none is provided
-    max_length = 80
+# Add command-line arguments
+parser.add_argument('folder_path', nargs='?', default=folder_path, help='path to the folder to search for files')
+parser.add_argument('output_file', nargs='?', default=output_file, help='path to the output file to store the sorted last lines')
+parser.add_argument('max_length', nargs='?', type=int, default=max_length, help='maximum length for the truncated last lines')
+
+# Parse the command-line arguments
+args = parser.parse_args()
+
+# Assign the values from the arguments to variables
+folder_path = args.folder_path
+output_file = args.output_file
+max_length = args.max_length
 
 # Open the output file in append mode
 with open(output_file, "a") as outfile:

@@ -1,4 +1,4 @@
-# Log Collector
+# Log Format Collector
 
 This script collects the last lines from readable log files in a specified folder and its subdirectories. It is designed to compare log formats by extracting the last line from each file.
 

@@ -19,19 +19,19 @@ used across different files in a given folder and its subdirectories.
 
 Details:
     Author: ogamingSCV
-    Version: 1.1
+    Version: 1.2
     Email: fetes.05-comings@icloud.com
     License: GNU General Public License v3.0
 
 
 Usage:
-    - python3 logs_collector.py [folder_path] [output_file] [max_length]
+- python3 logs_collector.py [-p FOLDER_PATH] [-o OUTPUT_FILE] [-m MAX_LENGTH]
 
 
 Arguments:
-    - folder_path (optional): Path to the folder to search for files (default: "/var/log/")
-    - output_file (optional): Path to the output file to store the sorted last lines (default: "log_formats.txt")
-    - max_length (optional): Maximum length for the truncated last lines (default: 80)
+-p, --folder-path (optional): Path to the folder to search for files (default: "/var/log/")
+-o, --output-file (optional): Path to the output file to store the sorted last lines (default: "log_formats.txt")
+-m, --max-length (optional): Maximum length for the truncated last lines (default: 80)
 
 
 Note: This script assumes that the log files are text files and are readable. Binary files and unreadable files will be skipped.
@@ -49,7 +49,7 @@ Example:
 
     Running the script with the following command:
 
-        python3 logs_collector.py /path/to/logs/ output.txt 70
+        python3 logs_collector.py -p /path/to/logs/ -o output.txt -m 70
 
     The script will process the log files in the specified folder and generate the "output.txt" file with the sorted last lines.
 
@@ -64,23 +64,18 @@ Output:
 
 import argparse
 import os
-import sys
+import socket
 
-# List to store the last lines from files
-last_lines = []
-
-# Set default values
-folder_path = "/var/log/"
-output_file = "log_formats.txt"
-max_length = 80
+# Get hostname
+hostname = socket.gethostname()
 
 # Create an ArgumentParser object
 parser = argparse.ArgumentParser(description="This script collects the last lines from readable log files in a specified folder and its subdirectories. It is designed to compare the log formats by extracting the last line from each file.")
 
 # Add command-line arguments
-parser.add_argument('folder_path', nargs='?', default=folder_path, help='path to the folder to search for files')
-parser.add_argument('output_file', nargs='?', default=output_file, help='path to the output file to store the sorted last lines')
-parser.add_argument('max_length', nargs='?', type=int, default=max_length, help='maximum length for the truncated last lines')
+parser.add_argument('-p', '--folder-path', default="/var/log/", help='path to the folder to search for files')
+parser.add_argument('-o', '--output-file', default="log_formats.txt", help='path to the output file to store the sorted last lines')
+parser.add_argument('-m', '--max-length', type=int, default=80, help='maximum length for the truncated last lines')
 
 # Parse the command-line arguments
 args = parser.parse_args()
@@ -90,14 +85,10 @@ folder_path = args.folder_path
 output_file = args.output_file
 max_length = args.max_length
 
-# Open the output file in append mode
-with open(output_file, "a") as outfile:
-
+def check_rec_folder(folder_path):
+    last_lines = []
     # Check if the folder path exists
     if os.path.exists(folder_path) and os.path.isdir(folder_path):
-
-        # Add the folder path as a comment in the output file
-        outfile.write(f"### Logs collected from {folder_path} ###\n")
 
         # Iterate over the files in the folder and its subdirectories
         for root, dirs, files in os.walk(folder_path):
@@ -107,36 +98,37 @@ with open(output_file, "a") as outfile:
                 # Check if the file is readable and not a symbolic link
                 if os.path.isfile(file_path) and not os.path.islink(file_path) and os.access(file_path, os.R_OK):
                     try:
-
                         # Open each file in read mode
                         with open(file_path, "r") as infile:
                             lines = infile.readlines()
                             if lines:
-
                                 # Get the last line from the file and truncate it if necessary
                                 last_line = lines[-1].strip()
                                 truncated_last_line = last_line[:max_length]
-
-                                if len(truncated_last_line) < max_length:
-                                    # Fill the remaining space with spaces
-                                    perfect_last_line = truncated_last_line + ' ' * (max_length - len(truncated_last_line))
-                                else:
-                                    perfect_last_line = truncated_last_line
+                                perfect_last_line = truncated_last_line.ljust(max_length)
 
                                 # Create a formatted string with the last line and file path
-                                path_last_line = perfect_last_line + "\t" + file_path
+                                path_last_line = f"{perfect_last_line}\t{file_path}"
                                 last_lines.append(path_last_line)
-
                     except UnicodeDecodeError:
                         # Skip reading binary files
                         continue
-
-        # Sort the last lines alphabetically
-        last_lines.sort()
-
-        # Write the sorted last lines to the output file
-        for line in last_lines:
-            outfile.write(line + "\n")
-
     else:
         print("Invalid folder path.")
+
+    return last_lines
+
+def write_to_file(last_lines, output_file):
+    # Sort the last lines alphabetically
+    last_lines.sort()
+
+    # Write the sorted last lines to the output file
+    with open(output_file, "a") as file:
+        # Add the folder path as a comment in the output file
+        file.write(f"\n\n### Logs collected from {folder_path} on {hostname} ###\n\n\n")
+        for line in last_lines:
+            file.write(line + "\n")
+
+# Start the script
+last_lines = check_rec_folder(folder_path)
+write_to_file(last_lines, output_file)

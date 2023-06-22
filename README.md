@@ -16,14 +16,14 @@ The Log Collector script is mainly intended to collect the last line of log file
 ## Usage
 
 ```shell
-python3 logs_collector.py [folder_path] [output_file] [max_length]
+python3 logs_collector.py [-p FOLDER_PATH] [-o OUTPUT_FILE] [-m MAX_LENGTH]
 ```
 
 ## Arguments
 
-- `folder_path` (optional): Path to the folder to search for files (default: "/var/log/")
-- `output_file` (optional): Path to the output file to store the sorted last lines (default: "log_formats.txt")
-- `max_length` (optional): Maximum length for the truncated last lines (default: 80)
+- `-p`, `--folder-path` (optional): Path to the folder to search for files (default: "/var/log/")
+- `-o`, `--output-file` (optional): Path to the output file to store the sorted last lines (default: "log_formats.txt")
+- `-m`, `--max-length` (optional): Maximum length for the truncated last lines (default: 80)
 
 **Note**: This script assumes that the log files are text files and are readable. Binary files and unreadable files will be skipped.
 
@@ -40,7 +40,7 @@ We want to retrieve the last lines from these log files, truncate them to a maxi
 Running the script with the following command:
 
 ```shell
-python3 logs_collector.py /path/to/logs/ output.txt 70
+python3 logs_collector.py -p /path/to/logs/ -o output.txt -m 70
 ```
 
 The script will process the log files in the specified folder and generate the "output.txt" file with the sorted last lines.
@@ -60,6 +60,6 @@ The "output.txt" file will contain the following content:
 
 Author: ogamingSCV
 
-Version: 1.0
+Version: 1.2
 
 Email: fetes.05-comings@icloud.com

@@ -22,7 +22,7 @@ used across different files in a given folder and its subdirectories.
 
 Details:
     Author: ogamingSCV
-    Version: 1.2
+    Version: 1.3
     Email: fetes.05-comings@icloud.com
     License: GNU General Public License v3.0
 

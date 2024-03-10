@@ -1,3 +1,5 @@
+[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
+
 # Log Format Collector
 
 This script collects the last lines from readable log files in a specified folder and its subdirectories. It is designed to compare log formats by extracting the last line from each file.
@@ -60,6 +62,6 @@ The "output.txt" file will contain the following content:
 
 Author: ogamingSCV
 
-Version: 1.2
+Version: 1.3
 
 Email: fetes.05-comings@icloud.com
